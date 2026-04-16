@@ -10,13 +10,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #030305;
-      --card-bg: rgba(255, 255, 255, 0.03);
+      --bg: #03040a;
+      --card-bg: rgba(20, 24, 34, 0.45);
       --card-border: rgba(255, 255, 255, 0.08);
-      --primary: #2563eb;
-      --primary-glow: #3b82f6;
+      --primary: #3b82f6;
+      --primary-glow: #60a5fa;
       --success: #10b981;
-      --text-main: #ffffff;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --font-family: 'Inter', sans-serif;
     }
@@ -34,8 +34,11 @@
       justify-content: center;
       background-color: var(--bg);
       background-image:
-        radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.15), transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08), transparent 40%);
+        radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.15), transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.1), transparent 50%),
+        repeating-linear-gradient(rgba(255, 255, 255, 0.015) 0px, transparent 1px, transparent 20px, rgba(255, 255, 255, 0.015) 21px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015) 0px, transparent 1px, transparent 20px, rgba(255, 255, 255, 0.015) 21px);
+      background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
       font-family: var(--font-family);
       color: var(--text-main);
       overflow: hidden;
@@ -51,14 +54,30 @@
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 40px 32px;
+      border-radius: 32px;
+      padding: 44px 32px;
       text-align: center;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      box-shadow: 
+        0 8px 16px -4px rgba(0, 0, 0, 0.3), 
+        0 24px 48px -12px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 20px rgba(255, 255, 255, 0.02);
       position: relative;
       overflow: hidden;
-      transition: transform 0.3s ease;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .card > * {
+      transition: opacity 0.45s ease, filter 0.45s ease, transform 0.45s ease;
+    }
+
+    .card.intro-active > *:not(.intro-overlay):not(.generation-overlay) {
+      opacity: 0.14;
+      filter: blur(10px);
+      transform: scale(0.985);
+      pointer-events: none;
     }
 
     .card::before {
@@ -71,60 +90,464 @@
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     }
 
-    h1 {
+    .intro-overlay, .generation-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: grid;
+      align-content: center;
+      gap: 22px;
+      padding: 34px 28px;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(249, 115, 22, 0.14), transparent 32%),
+        radial-gradient(circle at 82% 78%, rgba(37, 99, 235, 0.14), transparent 26%),
+        linear-gradient(160deg, rgba(3, 7, 18, 0.94), rgba(10, 15, 28, 0.98));
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+
+    .intro-overlay.hidden, .generation-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .generation-overlay {
+      z-index: 5;
+    }
+
+    .generation-options {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .intro-logo-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 32px;
+      margin-top: -16px;
+      line-height: 1;
+      padding-bottom: 32px;
+      width: 100%;
+      position: relative;
+    }
+
+    .intro-logo-text::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    }
+
+    .intro-logo-text::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 35%;
+      right: 35%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.8), transparent);
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.8);
+      z-index: 1;
+    }
+
+    .bfmidi-text {
+      font-size: 64px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .update-text {
       font-size: 24px;
+      font-weight: 900;
+      color: #f97316;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-top: 4px;
+      text-shadow: 0 4px 16px rgba(249, 115, 22, 0.6);
+      margin-right: -0.18em;
+    }
+
+    .intro-title {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .intro-title span {
+      color: #f97316;
+    }
+
+    .intro-caption {
+      margin: 10px 0 0 0;
+      color: rgba(226, 232, 240, 0.78);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .intro-scene {
+      position: relative;
+      height: 172px;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+      box-shadow:
+        inset 0 2px 10px rgba(0,0,0,0.5),
+        0 30px 40px -20px rgba(0, 0, 0, 0.8);
+    }
+
+    .intro-scene::before {
+      content: '';
+      position: absolute;
+      inset: 0px;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.6;
+    }
+
+    .intro-port-glow {
+      position: absolute;
+      right: 38px;
+      top: 50%;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 60%);
+      transform: translateY(-50%) scale(0.65);
+      filter: blur(8px);
+      opacity: 0;
+      animation: introPortGlow 2.5s ease forwards;
+    }
+
+    .intro-cable {
+      position: absolute;
+      left: -104px;
+      top: 50%;
+      width: 272px;
+      height: 82px;
+      transform: translate(-180px, -50%);
+      animation: 
+        introPlugCable 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+        idleCable 8s cubic-bezier(0.25, 1, 0.5, 1) 2.5s infinite;
+      filter: drop-shadow(0 15px 15px rgba(0,0,0,0.4));
+    }
+
+    .intro-cable-tail {
+      position: absolute;
+      left: 0;
+      top: 36px;
+      width: 184px;
+      height: 10px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(45deg, #1e293b, #1e293b 2px, #334155 2px, #334155 4px);
+      box-shadow: 
+        inset 0 -3px 4px rgba(0,0,0,0.5),
+        inset 0 2px 4px rgba(255,255,255,0.15);
+    }
+
+    .intro-cable-body {
+      position: absolute;
+      left: 172px;
+      top: 19px;
+      width: 68px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #64748b 0%, #334155 20%, #0f172a 80%, #1e293b 100%);
+      box-shadow:
+        inset -2px 0 4px rgba(0,0,0,0.6),
+        inset 0 1px 2px rgba(255,255,255,0.3),
+        -4px 0 10px rgba(0,0,0,0.4);
+      z-index: 2;
+    }
+
+    .intro-cable-body::after {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 10px;
+      width: 12px;
+      height: 24px;
+      background: linear-gradient(180deg, #475569, #1e293b, #475569);
+      border-radius: 4px 0 0 4px;
+      box-shadow: inset 2px 0 4px rgba(0,0,0,0.4);
+    }
+
+    .intro-cable-body::before {
+      content: '';
+      position: absolute;
+      top: 19px;
+      right: 28px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #60a5fa;
+      box-shadow: 0 0 8px #60a5fa, 0 0 16px #3b82f6;
+      animation: pulse-led 2s alternate infinite;
+    }
+
+    .intro-cable-tip {
+      position: absolute;
+      left: 238px;
+      top: 27px;
+      width: 26px;
+      height: 28px;
+      border-radius: 4px 8px 8px 4px;
+      background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 20%, #94a3b8 80%, #e2e8f0 100%);
+      box-shadow:
+        inset 1px 0 3px rgba(255,255,255,0.9),
+        inset 0 2px 3px rgba(255,255,255,0.7),
+        0 4px 8px rgba(0,0,0,0.3);
+      z-index: 1;
+      border-right: 1px solid #475569;
+    }
+
+    .intro-cable-tip::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      right: 4px;
+      width: 3px;
+      height: 16px;
+      background: #0f172a;
+      border-radius: 2px;
+      box-shadow: inset 1px 0 2px rgba(0,0,0,0.9);
+    }
+
+    .intro-port {
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      width: 126px;
+      height: 96px;
+      border-radius: 12px;
+      transform: translateY(-50%);
+      background: linear-gradient(180deg, #1e293b, #0f172a);
+      border: 1px solid #334155;
+      box-shadow:
+        0 20px 40px -24px rgba(15, 23, 42, 0.92),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 0;
+    }
+
+    .intro-port-slot {
+      position: relative;
+      width: 76px;
+      height: 24px;
+      border-radius: 12px;
+      background: #020617;
+      border: 1px solid #334155;
+      box-shadow:
+        inset 0 8px 8px rgba(0,0,0,0.8),
+        inset 0 -2px 4px rgba(0,0,0,0.5),
+        0 0 0 2px rgba(15, 23, 42, 0.98),
+        0 0 0 6px rgba(59, 130, 246, 0.08);
+    }
+
+    .intro-port-slot::before {
+      content: '';
+      position: absolute;
+      inset: 8px 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #1e293b, #475569, #1e293b);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .intro-port-label {
+      color: #94a3b8;
+      font-size: 13px;
       font-weight: 800;
-      margin: 0 0 8px 0;
-      letter-spacing: -0.02em;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .intro-hint {
+      margin: 0;
+      color: rgba(148, 163, 184, 0.72);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .intro-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .logo-btn {
+      flex: 1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px 12px;
+      background: rgba(15, 23, 42, 0.5);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.5);
+    }
+
+    .logo-btn img {
+      max-width: 100%;
+      height: 28px;
+      object-fit: contain;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+    }
+
+    .logo-btn:hover {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 
+        inset 0 1px 2px rgba(255,255,255,0.1),
+        0 8px 20px rgba(0,0,0,0.6);
+    }
+
+    .logo-btn:hover img {
+      opacity: 1;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));
+    }
+
+    .logo-btn:active {
+      transform: translateY(1px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.6);
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 3;
+    }
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: translateX(-2px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .model-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      margin-top: -12px;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin: 0 0 12px 0;
+      letter-spacing: -0.03em;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
 
     p {
       color: var(--text-muted);
       font-size: 15px;
       margin: 0 0 32px 0;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     .status-ring {
       width: 120px;
       height: 120px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--card-border);
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       margin: 0 auto 32px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: inset 0 4px 20px rgba(0,0,0,0.5), 0 8px 16px rgba(0,0,0,0.3);
     }
 
     .status-ring svg {
       width: 48px;
       height: 48px;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.3);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
       transition: all 0.5s ease;
     }
 
     .status-ring.active {
-      border-color: var(--primary);
-      box-shadow: 0 0 30px rgba(37, 99, 235, 0.2);
+      border-color: var(--primary-glow);
+      background: rgba(37, 99, 235, 0.08);
+      box-shadow: 
+        inset 0 4px 20px rgba(0,0,0,0.5),
+        0 0 30px rgba(59, 130, 246, 0.25),
+        inset 0 0 15px rgba(59, 130, 246, 0.15);
     }
 
     .status-ring.active svg {
-      color: var(--primary);
+      color: var(--primary-glow);
+      filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
     }
 
     .status-ring.flashing {
-      border-color: var(--primary);
+      border-color: var(--primary-glow);
       border-top-color: transparent;
       border-right-color: transparent;
-      box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+      box-shadow: 
+        0 0 40px rgba(59, 130, 246, 0.4),
+        inset 0 0 20px rgba(59, 130, 246, 0.2);
       animation: spin 1s linear infinite;
     }
 
     .status-ring.flashing svg {
-      color: var(--primary);
+      color: var(--primary-glow);
+      filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.8));
       animation: pulse 2s ease-in-out infinite;
     }
 
@@ -136,6 +559,11 @@
       to {
         transform: rotate(360deg);
       }
+    }
+
+    @keyframes pulse-led {
+      0% { opacity: 0.6; box-shadow: 0 0 4px #60a5fa; }
+      100% { opacity: 1; box-shadow: 0 0 12px #60a5fa, 0 0 24px #3b82f6; }
     }
 
     @keyframes pulse {
@@ -150,22 +578,81 @@
       }
     }
 
+    @keyframes introPlugCable {
+      0% {
+        opacity: 0;
+        transform: translate(-180px, -50%);
+      }
+
+      14% {
+        opacity: 1;
+      }
+
+      62% {
+        opacity: 1;
+        transform: translate(34px, -50%);
+      }
+
+      78% {
+        transform: translate(56px, -50%);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate(50px, -50%); /* slightly tweaked for depth */
+      }
+    }
+
+    @keyframes idleCable {
+      0%, 100% { transform: translate(50px, -50%) rotate(0deg); }
+      3% { transform: translate(50px, -49%) rotate(1.5deg); }
+      6% { transform: translate(49px, -50%) rotate(-0.5deg); }
+      9% { transform: translate(50px, -50%) rotate(0deg); }
+    }
+
+    @keyframes introPortGlow {
+      0%,
+      56% {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.65);
+      }
+
+      72% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.88;
+        transform: translateY(-50%) scale(1);
+      }
+    }
+
     .status-ring.success {
-      border-color: var(--success);
-      box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+      border-color: #34d399;
+      background: rgba(16, 185, 129, 0.08);
+      box-shadow: 
+        inset 0 4px 20px rgba(0,0,0,0.5),
+        0 0 30px rgba(16, 185, 129, 0.25),
+        inset 0 0 15px rgba(16, 185, 129, 0.15);
     }
 
     .status-ring.success svg {
-      color: var(--success);
+      color: #34d399;
+      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
     }
 
     .status-ring.error {
-      border-color: #ef4444;
-      box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+      border-color: #f87171;
+      background: rgba(239, 68, 68, 0.08);
+      box-shadow: 
+        inset 0 4px 20px rgba(0,0,0,0.5),
+        0 0 30px rgba(239, 68, 68, 0.25),
+        inset 0 0 15px rgba(239, 68, 68, 0.15);
     }
 
     .status-ring.error svg {
-      color: #ef4444;
+      color: #f87171;
+      filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.5));
     }
 
     .accent-orange {
@@ -176,33 +663,53 @@
       width: 100%;
       padding: 18px;
       border-radius: 16px;
-      border: none;
-      background: linear-gradient(135deg, var(--primary), #1d4ed8);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(135deg, var(--primary), #2563eb);
       color: white;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 4px 12px rgba(37, 99, 235, 0.2), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
       position: relative;
       overflow: hidden;
     }
 
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
     .btn:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+      box-shadow: 
+        0 10px 24px rgba(37, 99, 235, 0.4), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255,255,255,0.22);
+    }
+
+    .btn:hover:not(:disabled)::before {
+      opacity: 1;
     }
 
     .btn:active:not(:disabled) {
-      transform: translateY(0);
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
     }
 
     .btn:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
-      background: #334155;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: #1e293b;
       box-shadow: none;
-      color: #94a3b8;
+      color: #64748b;
     }
 
     .progress-container {
@@ -269,67 +776,73 @@
     }
 
     .circle {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: 700;
+      font-size: 13px;
       color: rgba(255, 255, 255, 0.3);
-      transition: all 0.4s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
     }
 
     .label {
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.3);
-      font-weight: 500;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.08em;
       transition: all 0.4s ease;
     }
 
     .line {
       flex: 1;
       height: 2px;
-      background: rgba(255, 255, 255, 0.1);
-      margin: 15px 5px 0 5px;
-      /* Align with circle center */
+      background: rgba(255, 255, 255, 0.08);
+      margin: 16px 5px 0 5px;
       transition: all 0.4s ease;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
     }
 
     /* Active/Done States */
     .step.active .circle {
-      border-color: var(--primary);
-      color: white;
-      box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
-      background: rgba(37, 99, 235, 0.1);
+      border-color: var(--primary-glow);
+      color: #ffffff;
+      box-shadow: 
+        0 0 16px rgba(59, 130, 246, 0.4),
+        inset 0 0 8px rgba(59, 130, 246, 0.4);
+      background: rgba(59, 130, 246, 0.2);
     }
 
     .step.active .label {
-      color: white;
+      color: var(--primary-glow);
+      text-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
     }
 
     .step.done .circle {
-      background: #10b981;
-      border-color: #10b981;
-      color: white;
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #34d399;
+      color: #34d399;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
     }
 
     .step.done .label {
-      color: #10b981;
+      color: #34d399;
     }
 
     .line.active {
-      background: var(--primary);
+      background: linear-gradient(90deg, #34d399, var(--primary-glow));
     }
 
     .line.done {
-      background: #10b981;
+      background: #34d399;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
     }
 
     /* Hidden technical elements */
@@ -398,11 +911,12 @@
     }
 
     .flash-options {
-      margin-top: 14px;
-      padding: 14px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-      background: rgba(255, 255, 255, 0.02);
+      margin-top: 16px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(15, 23, 42, 0.4);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
       text-align: left;
     }
 
@@ -455,10 +969,11 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: rgba(148, 163, 184, 0.3);
-      transition: 0.2s;
+      background-color: rgba(15, 23, 42, 0.8);
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .slider:before {
@@ -469,24 +984,56 @@
       left: 3px;
       top: 50%;
       transform: translateY(-50%);
-      background-color: white;
-      transition: 0.2s;
+      background-color: #94a3b8;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       border-radius: 999px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
     }
 
     .switch input:checked+.slider {
-      background-color: rgba(37, 99, 235, 0.8);
-      border-color: rgba(59, 130, 246, 0.5);
-      box-shadow: 0 0 16px rgba(37, 99, 235, 0.25);
+      background-color: rgba(59, 130, 246, 0.2);
+      border-color: var(--primary-glow);
+      box-shadow: 
+        inset 0 0 8px rgba(59, 130, 246, 0.4),
+        0 0 16px rgba(59, 130, 246, 0.3);
     }
 
     .switch input:checked+.slider:before {
       transform: translateY(-50%) translateX(18px);
+      background-color: #ffffff;
+      box-shadow: 0 0 8px #ffffff, 0 0 16px var(--primary-glow);
     }
 
     .switch input:disabled+.slider {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
+    }
+
+    @media (max-width: 520px) {
+      .card {
+        padding: 32px 24px;
+      }
+
+      .intro-overlay {
+        padding: 28px 22px;
+      }
+
+      .intro-title {
+        font-size: 22px;
+      }
+
+      .intro-scene {
+        height: 156px;
+      }
+
+      .intro-cable {
+        transform-origin: left center;
+      }
+
+      .intro-port {
+        right: 16px;
+        width: 116px;
+      }
     }
   </style>
 </head>
@@ -494,7 +1041,43 @@
 <body>
 
   <div class="container">
-    <div class="card">
+    <div class="card intro-active">
+      <button class="back-btn" id="backBtn" type="button" title="Trocar Modelo" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="intro-overlay" id="introOverlay">
+        <div>
+          <div class="intro-logo-text">
+            <div class="bfmidi-text">BFMiDi</div>
+            <div class="update-text">UPDATE <span style="color: var(--primary-glow); text-shadow: 0 2px 12px rgba(96, 165, 250, 0.8);">V11</span></div>
+          </div>
+          <h2 class="intro-title">Conecte o USB-C na porta <span>DEVICE</span></h2>
+          <p class="intro-caption">Antes de iniciar o update, use o cabo USB-C na porta marcada como DEVICE para o navegador encontrar o equipamento certo.</p>
+        </div>
+
+        <div class="intro-scene">
+          <div class="intro-port-glow"></div>
+          <div class="intro-cable">
+            <div class="intro-cable-tail"></div>
+            <div class="intro-cable-body"></div>
+            <div class="intro-cable-tip"></div>
+          </div>
+
+          <div class="intro-port">
+            <div class="intro-port-slot"></div>
+            <div class="intro-port-label">DEVICE</div>
+          </div>
+        </div>
+
+        <div class="intro-actions">
+          <button class="logo-btn" id="gen1Btn" title="BFMiDi 1 ou 2"><img src="logobfmidi2.png" alt="BFMiDi 1/2"></button>
+          <button class="logo-btn" id="gen3Btn" title="BFMiDi 3"><img src="logobfmidi3.png" alt="BFMiDi 3"></button>
+        </div>
+        <p class="intro-hint">Clique na geração do seu BFMiDi para continuar</p>
+      </div>
+
       <div class="status-ring" id="statusRing">
         <!-- Icon: Chip/CPU -->
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -504,8 +1087,9 @@
         </svg>
       </div>
 
-      <h1>BFMiDI update <span class="accent-orange">v11 beta</span></h1>
-      <p id="description">Conecte seu dispositivo USB para iniciar a atualização do firmware oficial.</p>
+      <div class="model-badge" id="selectedModelBadge" style="display: none;"></div>
+      <h1>BFMiDI update <span class="accent-orange">v11</span></h1>
+      <p id="description">Conecte o cabo USB-C na porta DEVICE para iniciar a atualização do firmware oficial.</p>
 
       <button class="btn" id="actionBtn">Conectar Dispositivo</button>
       <div class="spinner" id="spinner"></div>
@@ -570,8 +1154,9 @@
   <script src="https://cdn.jsdelivr.net/npm/web-serial-polyfill@1.0.14/dist/serial.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
   <script type="module">
-    import { ESPLoader, Transport } from "https://unpkg.com/esptool-js@latest/bundle.js";
+    import { ESPLoader, Transport } from "./esptool-bundle.js";
 
+    const card = document.querySelector(".card");
     const actionBtn = document.getElementById("actionBtn");
     const spinner = document.getElementById("spinner");
     const statusText = document.getElementById("statusText");
@@ -585,6 +1170,11 @@
     const flashOptions = document.getElementById("flashOptions");
     const eraseAllToggle = document.getElementById("eraseAllToggle");
     const autoFlashToggle = document.getElementById("autoFlashToggle");
+    const introOverlay = document.getElementById("introOverlay");
+    const gen1Btn = document.getElementById("gen1Btn");
+    const gen3Btn = document.getElementById("gen3Btn");
+    const backBtn = document.getElementById("backBtn");
+    const selectedModelBadge = document.getElementById("selectedModelBadge");
 
     const serialLib = navigator.serial ? navigator.serial : (navigator.usb ? window.serial : null);
 
@@ -607,6 +1197,44 @@
     let lastPortInfo = null;
     let appState = 'idle'; // idle, connected, flashing, done
     let autoFlashMode = autoFlashToggle.checked; // Inicializa baseado no checkbox
+
+    function selectGeneration(appBinFile) {
+      images[2].path = appBinFile;
+      if (introOverlay) introOverlay.classList.add("hidden");
+      card?.classList.remove("intro-active");
+      
+      const isGen3 = appBinFile === "app2.bin";
+      selectedModelBadge.textContent = isGen3 ? "BFMiDi 3" : "BFMiDi 1/2";
+      selectedModelBadge.style.color = isGen3 ? "#c084fc" : "#60a5fa";
+      selectedModelBadge.style.borderColor = isGen3 ? "rgba(139, 92, 246, 0.3)" : "rgba(59, 130, 246, 0.3)";
+      selectedModelBadge.style.background = isGen3 ? "rgba(139, 92, 246, 0.15)" : "rgba(59, 130, 246, 0.15)";
+      selectedModelBadge.style.boxShadow = isGen3 ? "0 2px 8px rgba(139, 92, 246, 0.15)" : "0 2px 8px rgba(59, 130, 246, 0.15)";
+      selectedModelBadge.style.display = "inline-flex";
+      backBtn.style.display = "flex";
+      
+      log("Firmware selecionado: " + appBinFile);
+    }
+
+    gen1Btn?.addEventListener('click', () => selectGeneration("app.bin"));
+    gen3Btn?.addEventListener('click', () => selectGeneration("app2.bin"));
+
+    backBtn?.addEventListener('click', () => {
+      if (appState === 'flashing') return;
+      if (introOverlay) introOverlay.classList.remove("hidden");
+      card?.classList.add("intro-active");
+      backBtn.style.display = "none";
+      selectedModelBadge.style.display = "none";
+    });
+
+    function startIntroAnimation() {
+      if (!introOverlay || !card) return;
+      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+      if (prefersReducedMotion) {
+        return;
+      }
+    }
+
+    startIntroAnimation();
 
     // Sincroniza o modo automático com o toggle
     autoFlashToggle.addEventListener('change', () => {
@@ -694,7 +1322,7 @@
           actionBtn.textContent = autoFlashMode ? "Conectar e Atualizar" : "Conectar Dispositivo";
           description.textContent = autoFlashMode
             ? "Clique no botão abaixo para conectar e atualizar automaticamente."
-            : "Conecte seu dispositivo USB para iniciar a atualização do firmware oficial.";
+            : "Conecte o cabo USB-C na porta DEVICE para iniciar a atualização do firmware oficial.";
           progressContainer.classList.remove("visible");
           break;
         case 'awaiting_port':
@@ -781,8 +1409,30 @@
       if (!serialLib) throw new Error("Navegador incompatível. Use Chrome ou Edge.");
 
       log("User Agent: " + navigator.userAgent);
-      log("Solicitando porta serial...");
 
+      // Tenta encontrar dispositivo já autorizado (sem diálogo)
+      try {
+        const ports = await serialLib.getPorts();
+        const match = ports.find(p => {
+          const info = p.getInfo();
+          return defaultFilters.some(f =>
+            f.usbVendorId === info.usbVendorId &&
+            (!f.usbProductId || f.usbProductId === info.usbProductId)
+          );
+        });
+        if (match) {
+          device = match;
+          const info = device.getInfo();
+          lastPortInfo = { usbVendorId: info.usbVendorId, usbProductId: info.usbProductId };
+          log(`Dispositivo encontrado automaticamente: VID=0x${info.usbVendorId.toString(16)} PID=0x${info.usbProductId.toString(16)}`);
+          return device;
+        }
+      } catch (e) {
+        log("Auto-detect falhou: " + e.message);
+      }
+
+      // Nenhum dispositivo autorizado encontrado, mostra diálogo
+      log("Solicitando porta serial...");
       const filters = lastPortInfo ? [lastPortInfo] : defaultFilters;
       try {
         device = await serialLib.requestPort({ filters });
@@ -878,19 +1528,18 @@
           }
 
           setUIState('connecting', "Reiniciando em modo download...");
-          setUIState('connecting', "Reiniciando em modo download...");
-          // Delay critico de 3s para macOS
-          log("Aguardando 3s para re-enumeração USB...");
-          await sleep(3000);
+          log("Aguardando re-enumeração USB...");
+          await sleep(2000);
 
-          // Tenta reconectar
+          // Tenta reconectar rapidamente (3s) - se o browser já tem permissão pro PID 0x0002
           try {
-            await waitForReconnect(15000);
+            await waitForReconnect(3000);
           } catch (e) {
-            // Se falhar reconexao automatica (permissao), pedimos manual
-            log("Falha no reconnect automatico: " + e.message);
+            // Esperado: ESP32-S2 muda de PID ao entrar em bootloader,
+            // browser precisa de nova autorização do usuário
+            log("Novo dispositivo detectado - autorização necessária");
             device = null;
-            lastPortInfo = null; // Limpa filtro para permitir novo PID (0x0002)
+            lastPortInfo = null;
           }
         }
 
@@ -903,9 +1552,9 @@
         // Se por algum motivo device for null (ex: falha no wait e no acquire), paramos
         if (!device) throw new Error("Dispositivo não selecionado.");
 
-        // Delay maior para estabilizar a porta após reconexão
+        // Delay para estabilizar a porta após reconexão
         log("Aguardando estabilização da porta...");
-        await sleep(500);
+        await sleep(1000);
 
         // Tenta conectar com retry em caso de "invalid response"
         let connected = false;
@@ -940,17 +1589,15 @@
             lastError = err;
             log(`Tentativa ${attempt} falhou: ${err.message}`);
 
-            // Se for "invalid response", tenta novamente após delay
-            if (err.message.includes("invalid response") && attempt < maxRetries) {
+            await closeTransportSafe(transport);
+            transport = null;
+            esploader = null;
+
+            if (attempt < maxRetries) {
               log("Aguardando antes de nova tentativa...");
-              await closeTransportSafe(transport);
-              transport = null;
-              esploader = null;
-              await sleep(1000 * attempt); // Delay progressivo: 1s, 2s, 3s
-            } else if (attempt >= maxRetries) {
-              throw lastError;
+              await sleep(1000 * attempt);
             } else {
-              throw err;
+              throw lastError;
             }
           }
         }
